@@ -1,0 +1,10 @@
+.author{
+    font-style: italic;
+    float: left;
+}
+.config{
+    float: right;
+}
+.spacing{
+    clear: both;
+}

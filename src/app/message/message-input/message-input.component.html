@@ -1,0 +1,17 @@
+<form ngNativeValidate (ngSubmit)="onSubmit(f)" #f="ngForm" >
+  <div class="form-group">
+    <label for="content">Content</label>
+    <input class="form-control" type="text" name="content" id="content" required [ngModel]="editMessage?.content" autocomplete="off" >
+  </div>
+  <button 
+    class="btn btn-success" 
+    *ngIf="!editMessage" 
+    type="submit"
+    >Send</button>
+  <button 
+    class="btn btn-primary" 
+    *ngIf="editMessage" 
+    type="submit"
+    >Update</button>
+  <button class="btn btn-danger" type="button" (click)="f.reset()" *ngIf="editMessage" >Clear</button>
+</form>
