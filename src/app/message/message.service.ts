@@ -19,7 +19,7 @@ export class MessageService {
 
   getMessage(){
     // return this.messages;
-    return this._http.get('http://localhost:3001/api/message')
+    return this._http.get('/api/message')
               .map((respone:Response)=>{
                 const messages = respone.json().obj;
                 const modifiedMessages:Message[]=[];
@@ -36,7 +36,7 @@ export class MessageService {
   addMessage(message:Message){
     // this.messages.push(message);
     const token = localStorage.getItem('token') ? `?token=${localStorage.getItem('token')}` : '';
-    return this._http.post(`http://localhost:3001/api/message/${token}`,{content:message.content})
+    return this._http.post(`/api/message/${token}`,{content:message.content})
             .map((response:Response)=>{
               return response.json()
             }).catch((error:Response)=>Observable.throw(error));
@@ -44,7 +44,7 @@ export class MessageService {
 
   updateMessage(message:Message){
     const token = localStorage.getItem('token') ? `?token=${localStorage.getItem('token')}` : '';
-    return this._http.patch(`http://localhost:3001/api/message/${message.messageId}${token}`,{content : message.content})
+    return this._http.patch(`/api/message/${message.messageId}${token}`,{content : message.content})
             .map((response:Response)=>{
               return response.json().message;
             })
@@ -54,7 +54,7 @@ export class MessageService {
   deleteMessage(message:Message){
     this.messages.splice(this.messages.indexOf(message),1);
     const token = localStorage.getItem('token') ? `?token=${localStorage.getItem('token')}` : '';
-    return this._http.delete(`http://localhost:3001/api/message/${message.messageId}${token}`)
+    return this._http.delete(`/api/message/${message.messageId}${token}`)
             .map((response:Response)=>{
               return response.json().message
             }).catch(

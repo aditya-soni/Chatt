@@ -12,7 +12,7 @@ export class AuthService {
 
     signUpUser(user:User){
         // var suser = {firstname : user.firstName, last}
-        return this._http.post('http://localhost:3001/api/user',user)
+        return this._http.post('/api/user',user)
                 .map((response:Response)=>{
                     return response.json().message;
                 }).catch(
@@ -21,7 +21,7 @@ export class AuthService {
     }
 
     signInUser(email,password){
-        return this._http.post('http://localhost:3001/api/user/login',{email,password})
+        return this._http.post('/api/user/login',{email,password})
                 .map((response:Response)=>{
                     return response.json()
                 }).catch(
