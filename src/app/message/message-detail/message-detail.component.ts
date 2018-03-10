@@ -27,4 +27,8 @@ export class MessageDetailComponent implements OnInit {
       (err)=>console.error(err)
     )
   }
+
+  correctUser(){
+   return this.msgService.correctUser(this.message.userId);
+  }
 }

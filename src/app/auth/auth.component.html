@@ -1,8 +1,8 @@
 <nav class="col-md-8 col-md-offset-2" >
   <ul class="nav nav-tabs">
-    <li routerLinkActive="active" ><a routerLink="/auth/login" >SignIn</a></li>
     <li routerLinkActive="active" ><a routerLink="/auth/signup" >SignUp</a></li>
-    <li routerLinkActive="active" ><a routerLink="/auth/logout" >SignOut</a></li>
+    <li *ngIf="!isLoggedIn()" routerLinkActive="active" ><a routerLink="/auth/login" >SignIn</a></li>
+    <li *ngIf="isLoggedIn()" routerLinkActive="active" ><a routerLink="/auth/logout" >SignOut</a></li>
   </ul>
 </nav>
 <!-- <div class="row " > -->

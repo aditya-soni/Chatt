@@ -10,7 +10,7 @@ const appRoutes:Routes = [
     { path: '', redirectTo: '/messenger', pathMatch: 'full' },
     { path: 'messenger', component: MessageComponent },
     { path: 'auth', component: AuthComponent ,children:[
-        { path: '', redirectTo : '/auth/login', pathMatch : 'full' },
+        { path: '', redirectTo : '/auth/signup', pathMatch : 'full' },
         { path: 'login', component: LogInComponent },
         { path: 'signup', component: SignUpComponent },
         { path: 'logout', component: SignOutComponent },

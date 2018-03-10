@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { AuthService } from '../auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-log-in',
@@ -8,7 +10,10 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 })
 export class LogInComponent implements OnInit {
   signInForm:FormGroup;
-  constructor() { }
+  constructor(
+    private authService:AuthService,
+    private router:Router
+  ) { }
 
   ngOnInit() {
     this.signInForm = new FormGroup({
@@ -21,7 +26,17 @@ export class LogInComponent implements OnInit {
     if(!this.signInForm.valid){
       return alert('Please fill the form')
     }
-    console.log(this.signInForm.value);
+    // console.log(this.signInForm.value);
+    this.authService.signInUser(this.signInForm.value.email,this.signInForm.value.password).subscribe(
+      (response)=>{
+        // console.log(response)
+        localStorage.setItem('token',response.token);
+        localStorage.setItem('userId',response.userId);
+        sessionStorage.setItem('token',response.token)
+        this.router.navigate(['/']);
+      },
+      (err)=>console.error(err)
+    )
     this.signInForm.reset();
   }
 

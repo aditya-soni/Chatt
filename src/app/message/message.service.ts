@@ -19,12 +19,12 @@ export class MessageService {
 
   getMessage(){
     // return this.messages;
-    return this._http.get('/api/message')
+    return this._http.get('http://localhost:3001/api/message')
               .map((respone:Response)=>{
                 const messages = respone.json().obj;
                 const modifiedMessages:Message[]=[];
                 for(let message of messages){
-                  modifiedMessages.push(new Message(message.content,'Dummy',message._id,null));
+                  modifiedMessages.push(new Message(message.content,message.user.firstName,message._id,message.user._id));
                 }
                 this.messages = modifiedMessages;
                 return modifiedMessages;
@@ -35,14 +35,16 @@ export class MessageService {
 
   addMessage(message:Message){
     // this.messages.push(message);
-    return this._http.post('/api/message',{content:message.content})
+    const token = localStorage.getItem('token') ? `?token=${localStorage.getItem('token')}` : '';
+    return this._http.post(`http://localhost:3001/api/message/${token}`,{content:message.content})
             .map((response:Response)=>{
               return response.json()
             }).catch((error:Response)=>Observable.throw(error));
   }
 
   updateMessage(message:Message){
-    return this._http.patch(`/api/message/${message.messageId}`,{content : message.content})
+    const token = localStorage.getItem('token') ? `?token=${localStorage.getItem('token')}` : '';
+    return this._http.patch(`http://localhost:3001/api/message/${message.messageId}${token}`,{content : message.content})
             .map((response:Response)=>{
               return response.json().message;
             })
@@ -51,11 +53,16 @@ export class MessageService {
 
   deleteMessage(message:Message){
     this.messages.splice(this.messages.indexOf(message),1);
-    return this._http.delete(`/api/message/${message.messageId}`)
+    const token = localStorage.getItem('token') ? `?token=${localStorage.getItem('token')}` : '';
+    return this._http.delete(`http://localhost:3001/api/message/${message.messageId}${token}`)
             .map((response:Response)=>{
               return response.json().message
             }).catch(
               (err:Response)=>Observable.throw(err)
             )
+  }
+
+  correctUser(userId){
+   return localStorage.getItem('userId') == userId ? true : false
   }
 }

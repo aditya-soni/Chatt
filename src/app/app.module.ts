@@ -15,6 +15,7 @@ import { MessageDetailComponent } from './message/message-detail/message-detail.
 import { LogInComponent } from './auth/log-in/log-in.component';
 import { SignUpComponent } from './auth/sign-up/sign-up.component';
 import { SignOutComponent } from "./auth/sign-out.component";
+import { AuthService } from "./auth/auth.service";
 
 
 @NgModule({
@@ -38,7 +39,9 @@ import { SignOutComponent } from "./auth/sign-out.component";
     HttpModule,
     LoadingBarHttpModule
   ],
-  providers: [],
+  providers: [
+    AuthService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

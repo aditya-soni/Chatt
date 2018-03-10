@@ -27,7 +27,7 @@ export class MessageInputComponent implements OnInit {
       this.msgService.addMessage(newMsg).subscribe(
         (result)=>{
           console.log(result.message);
-          this.msgService.pushMessage(new Message(result.obj.content,'Dummy',result.obj._id,null));
+          this.msgService.pushMessage(new Message(result.obj.content,result.obj.user.firstName,result.obj._id,result.obj.user._id));
         },
         (err)=>{console.error(err)}
       )
