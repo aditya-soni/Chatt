@@ -1,4 +1,7 @@
 # TestChat
+Demo - 
+https://fierce-inlet-76300.herokuapp.com/
+
 
 # Technologies used
   Mongoose & mLab | 
@@ -8,5 +11,3 @@
   JWT Authentication | 
   Heroku
 
-Demo - 
-https://fierce-inlet-76300.herokuapp.com/
