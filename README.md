@@ -1,11 +1,11 @@
 # TestChat
 
 # Technologies used
-  Mongooose
-  Express JS
-  Angular 5 & Angular CLI
-  Node JS
-  JWT Authentication
+  Mongoose & mLab | 
+  Express JS |
+  Angular 5 & Angular CLI | 
+  Node JS | 
+  JWT Authentication | 
   Heroku
 
 Demo - 
