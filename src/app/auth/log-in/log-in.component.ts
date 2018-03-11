@@ -33,9 +33,11 @@ export class LogInComponent implements OnInit {
         localStorage.setItem('token',response.token);
         localStorage.setItem('userId',response.userId);
         sessionStorage.setItem('token',response.token)
-        this.router.navigate(['/']);
+        this.router.navigate(['/messenger']);
       },
-      (err)=>console.error(err)
+      (err)=>{
+        // alert('Please enter correct details')
+        console.error(err)}
     )
     this.signInForm.reset();
   }

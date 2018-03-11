@@ -7,7 +7,7 @@ import { SignUpComponent } from './auth/sign-up/sign-up.component';
 import { SignOutComponent } from './auth/sign-out.component';
 
 const appRoutes:Routes = [
-    { path: '', redirectTo: '/messenger', pathMatch: 'full' },
+    { path: '', redirectTo: '/auth/signup', pathMatch: 'full' },
     { path: 'messenger', component: MessageComponent },
     { path: 'auth', component: AuthComponent ,children:[
         { path: '', redirectTo : '/auth/signup', pathMatch : 'full' },

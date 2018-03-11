@@ -122,10 +122,6 @@ MIT
 MIT
 MIT
 
-@angular/forms@5.2.8
-MIT
-MIT
-
 @angular/http@5.2.8
 MIT
 MIT
@@ -135,6 +131,10 @@ MIT
 MIT
 
 @angular/common@5.2.8
+MIT
+MIT
+
+@angular/forms@5.2.8
 MIT
 MIT
 

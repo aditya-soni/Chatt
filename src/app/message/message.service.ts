@@ -3,6 +3,7 @@ import { Message } from "./message.model";
 import { Http, Response } from "@angular/http";
 import 'rxjs/Rx';
 import { Observable } from 'rxjs/Rx';
+import { ErrorService } from '../errors/error.service';
 
 @Injectable()
 export class MessageService {
@@ -10,7 +11,8 @@ export class MessageService {
   messageForEdit = new EventEmitter<Message>();
 
   constructor(
-    private _http : Http
+    private _http : Http,
+    private errorService:ErrorService
   ) { }
 
   pushMessage(message:Message){
@@ -19,7 +21,8 @@ export class MessageService {
 
   getMessage(){
     // return this.messages;
-    return this._http.get('/api/message')
+    const token = localStorage.getItem('token') ? `?token=${localStorage.getItem('token')}` : '';
+    return this._http.get(`/api/message${token}`)
               .map((respone:Response)=>{
                 const messages = respone.json().obj;
                 const modifiedMessages:Message[]=[];
@@ -29,7 +32,10 @@ export class MessageService {
                 this.messages = modifiedMessages;
                 return modifiedMessages;
               }).catch(
-                (err:Response) => Observable.throw(err)
+                (err:Response) => {
+                  this.errorService.errorHandle(err.json());
+                  return Observable.throw(err.json());
+                }
               )
   }
 
@@ -39,7 +45,8 @@ export class MessageService {
     return this._http.post(`/api/message/${token}`,{content:message.content})
             .map((response:Response)=>{
               return response.json()
-            }).catch((error:Response)=>Observable.throw(error));
+            }).catch((error:Response)=>{this.errorService.errorHandle(error.json());
+              return Observable.throw(error.json())});
   }
 
   updateMessage(message:Message){
@@ -48,7 +55,9 @@ export class MessageService {
             .map((response:Response)=>{
               return response.json().message;
             })
-            .catch((err:Response)=>Observable.throw(err));
+            .catch((err:Response)=>{
+              this.errorService.errorHandle(err.json());
+              return Observable.throw(err.json())});
   }
 
   deleteMessage(message:Message){
@@ -58,7 +67,9 @@ export class MessageService {
             .map((response:Response)=>{
               return response.json().message
             }).catch(
-              (err:Response)=>Observable.throw(err)
+              (err:Response)=>{
+                this.errorService.errorHandle(err.json());
+                return Observable.throw(err.json())}
             )
   }
 

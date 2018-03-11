@@ -11,13 +11,74 @@ var {User} = require('../models/user');
 router.get('/',(req,res)=>{
     res.send('APi')
 });
-// app.use('/message',authenticate);
+// Auth routes
+// create user
+
+router.post('/user',(req,res)=>{
+    var user = new User({
+        firstName : req.body.firstName,
+        lastName : req.body.lastName,
+        email : req.body.email,
+        password : bcrypt.hashSync(req.body.password,10)
+    });
+    user.save().then(
+        (savedUser)=>{
+            res.status(201).json({
+                message: 'Saved Succesfully',
+                obj : savedUser
+            })
+        },
+        (err)=>{
+            res.status(400).json({
+                title : 'An error has occured',
+                error : err
+            })
+        }
+    )
+});
+
+// sign in user and generate token
+router.post('/user/login',(req,res)=>{
+    User.findOne({email:req.body.email}).then(
+        (user)=>{
+            // invalid user email
+            if(!user){
+                return res.status(404).json({
+                    error : {message : 'No user found'}
+                })
+            }
+            // checking password with hashed one and sending response
+            bcrypt.compare(req.body.password,user.password,(err,result)=>{
+                if(err){return res.status(400).json({title:'An error has occured',error : err}) }
+                if(result){
+                    var token = jwt.sign({user:user},'aditya',{expiresIn:"2h"});
+                    res.status(200).json({
+                    message : 'Success',
+                    token : token,
+                    userId : user._id,
+                    auth :result
+                })}
+                else{
+                    res.status(400).json({error : {message:'enter valid details',auth : result}})
+                }
+            })
+
+        },
+        (err)=>{
+            res.status(400).json({
+                title : ' An error occured',
+                error : err
+            })
+        }
+    )
+});
+
 
 var authenticate = (req,res,next)=>{
     jwt.verify(req.query.token,'aditya',(err,decoded)=>{
-        if(err){
+        if(err){            
             return res.status(401).json({
-                message : 'Authentication failure',
+                title : 'Authentication failure',
                 error : err
             })
         }
@@ -26,7 +87,7 @@ var authenticate = (req,res,next)=>{
 }
 
 // get messages
-router.get('/message',(req,res)=>{
+router.get('/message',authenticate,(req,res)=>{
     Message.find().populate('user','firstName') .then(
         (messages)=>{
             res.status(200).json({
@@ -36,8 +97,8 @@ router.get('/message',(req,res)=>{
         },
         (err)=>{
             res.send(400).json({
-                message : 'Something went wrong',
-                obj :err
+                title : 'Something went wrong',
+                error :err
             })
         }
     );
@@ -49,7 +110,7 @@ router.post('/message',authenticate,(req,res)=>{
     User.findById(decoded.user._id,(err,user)=>{
         if(err){
             res.status(400).json({
-                message : 'Something went wrong',
+                title : 'Something went wrong',
                 error : err
             });
         }
@@ -67,7 +128,7 @@ router.post('/message',authenticate,(req,res)=>{
         ),
         err =>{
             res.status(400).json({
-                message : 'Something went wrong',
+                title : 'Something went wrong',
                 error : err
             })
         }
@@ -81,7 +142,7 @@ router.post('/message',authenticate,(req,res)=>{
 router.patch('/message/:id',authenticate,(req,res)=>{
     if(!mongoose.Types.ObjectId.isValid(req.params.id)){
         return res.status(400).json({
-            message : 'Please enter a valid Id'
+            error : {message : 'Please enter a valid Id' }
         })
     }
     var decoded = jwt.decode(req.query.token);
@@ -89,18 +150,18 @@ router.patch('/message/:id',authenticate,(req,res)=>{
         (message)=>{
             if(message.user != decoded.user._id){
                 return res.json({
-                    message : 'user dont match'
+                    error :{message : 'user dont match'}
                 })
             }
             Message.findByIdAndUpdate(req.params.id,{$set : { content : req.body.content } }, {new : true},(err,result)=>{
                 if(err){
                     return res.status(404).json({
-                        message : 'Some error has occured',
+                        title : 'Some error has occured',
                         error : err
                     })
                 }
                 if(!result){
-                    return res.status(404).json({message: 'No message found'});
+                    return res.status(404).json({error: {message: 'No message found'}});
                 }
                 res.status(200).json({
                     message : 'Updated Succesfully',
@@ -130,7 +191,7 @@ router.patch('/message/:id',authenticate,(req,res)=>{
 router.delete('/message/:id',authenticate,(req,res)=>{
     if(!mongoose.Types.ObjectId.isValid(req.params.id)){
         return res.status(400).json({
-            message : 'Please enter a valid Id'
+            error : {message : 'Please enter a valid Id'}
         })
     }
     var decoded = jwt.decode(req.query.token);
@@ -138,14 +199,14 @@ router.delete('/message/:id',authenticate,(req,res)=>{
         (message)=>{
             if(message.user != decoded.user._id ){
                 return res.json({
-                    message : 'user dont match'
+                   error : {message : 'user dont match'}
                 })
             }
             Message.findByIdAndRemove(req.params.id).then(
                 (deletedMessage)=>{
                     if(!deletedMessage){
                         return res.status(404).json({
-                            message : 'Could not found a message to delete'
+                            error : {message : 'Could not found a message to delete'}
                         });
                     }
                     res.status(200).json({
@@ -155,7 +216,7 @@ router.delete('/message/:id',authenticate,(req,res)=>{
                 },
                 (err)=>{
                     res.status(400).json({
-                        message: 'Something went wrong',
+                        title: 'Something went wrong',
                         error : err
                     })
                 }
@@ -183,66 +244,5 @@ router.delete('/message/:id',authenticate,(req,res)=>{
     // )
 });
 
-// Auth routes
-// create user
-
-router.post('/user',(req,res)=>{
-    var user = new User({
-        firstName : req.body.firstName,
-        lastName : req.body.lastName,
-        email : req.body.email,
-        password : bcrypt.hashSync(req.body.password,10)
-    });
-    user.save().then(
-        (savedUser)=>{
-            res.status(201).json({
-                message: 'Saved Succesfully',
-                obj : savedUser
-            })
-        },
-        (err)=>{
-            res.status(400).json({
-                message : 'An error has occured',
-                error : err
-            })
-        }
-    )
-});
-
-// sign in user and generate token
-router.post('/user/login',(req,res)=>{
-    User.findOne({email:req.body.email}).then(
-        (user)=>{
-            // invalid user email
-            if(!user){
-                return res.status(404).json({
-                    message : 'No user found'
-                })
-            }
-            // checking password with hashed one and sending response
-            bcrypt.compare(req.body.password,user.password,(err,result)=>{
-                if(err){return res.status(400).json({error : err}) }
-                if(result){
-                    var token = jwt.sign({user:user},'aditya',{expiresIn:"2h"});
-                    res.status(200).json({
-                    message : 'Success',
-                    token : token,
-                    userId : user._id,
-                    auth :result
-                })}
-                else{
-                    res.status(400).json({message:'enter valid details',auth : result})
-                }
-            })
-
-        },
-        (err)=>{
-            res.status(400).json({
-                message : ' An error occured',
-                error : err
-            })
-        }
-    )
-});
 
 module.exports = router;

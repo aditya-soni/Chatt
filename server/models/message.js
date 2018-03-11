@@ -18,7 +18,7 @@ var messageSchema = new Schema({
 messageSchema.post('remove',(message)=>{
     User.findById(message.user).then(
         (user)=>{
-            console.log(message)
+            // console.log(message)
             user.messages.pull(message);
             user.save()
         },
