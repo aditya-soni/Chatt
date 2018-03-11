@@ -3,7 +3,7 @@
 Demo - 
 https://fierce-inlet-76300.herokuapp.com/
 
-(use email - test@test.com, password - test or create a new)
+(use email - 'test@test.com' , password - 'test' or create a new user)
 
 
 # Technologies used
